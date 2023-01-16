@@ -106,11 +106,38 @@ public class OrderingCardTest {
         driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("1234567890");
         driver.findElement(By.className("checkbox__box")).click();
         driver.findElement(By.className("button")).click();
-
         String actualPhoneError = driver.findElement(By.cssSelector("[data-test-id='phone'].input_invalid .input__sub")).getText().trim();
         assertEquals("Телефон указан неверно. Должно быть 11 цифр, например, +79012345678.", actualPhoneError);
 
     }
+
+    @Test
+    void testFormSubmissionWithEmptyNameField() {
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79881232321");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.className("button")).click();
+        String errorMessage = driver.findElement(By.cssSelector("[data-test-id='name'] span.input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", errorMessage);
+    }
+
+    @Test
+    void testFormSubmissionWithEmptyPhoneField() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
+        driver.findElement(By.className("checkbox__box")).click();
+        driver.findElement(By.className("button")).click();
+        String errorMessage = driver.findElement(By.cssSelector("[data-test-id='phone'] span.input__sub")).getText();
+        assertEquals("Поле обязательно для заполнения", errorMessage);
+    }
+
+    @Test
+    void testFormSubmissionWithUncheckedCheckbox() {
+        driver.findElement(By.cssSelector("[data-test-id='name'] input")).sendKeys("Иван Иванов");
+        driver.findElement(By.cssSelector("[data-test-id='phone'] input")).sendKeys("+79881232321");
+        driver.findElement(By.cssSelector("button.button")).click();
+        String errorMessage = driver.findElement(By.cssSelector("[data-test-id=agreement].input_invalid .checkbox__text")).getText().trim();
+        assertEquals("Я соглашаюсь с условиями обработки и использования моих персональных данных и разрешаю сделать запрос в бюро кредитных историй", errorMessage);
+    }
+
 }
 
 
